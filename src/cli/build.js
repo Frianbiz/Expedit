@@ -21,11 +21,9 @@ var fs = require('fs'),
 // build implementation
 // -----------------------------
 
-function build(jsonFilePath, outputDirectory, language = "swift") {
+function build(jsonFilePath, outputDirectory, language = "swift", scheme = "") {
     if (jsonFilePath === undefined) {
         log.error("--input parameter is missing");
-    } else if (outputDirectory === undefined) {
-        log.error("--output parameter is missing");
     } else {
         switch (language) {
             case "objc":
@@ -40,12 +38,17 @@ function build(jsonFilePath, outputDirectory, language = "swift") {
         }
     }
 
-    var absoluteJsonFilePath = path.join(__dirname, '../..', jsonFilePath);
-    var absoluteOutputPath = path.join(__dirname, '../..', outputDirectory);
+    var absoluteJsonFilePath = path.resolve(process.cwd(), jsonFilePath);
+    var absoluteOutputPath;
+    if (outputDirectory === undefined) {
+        absoluteOutputPath = path.parse(absoluteJsonFilePath).dir + '/';
+    } else {
+        absoluteOutputPath = path.resolve(process.cwd(), outputDirectory) + '/';
+    }
 
     fs.readFile(absoluteJsonFilePath, 'utf8', function (err, data) {
         if (err) {
-            log.error("json introuvable: " + absoluteJsonFilePath);
+            log.error("json not found at " + absoluteJsonFilePath);
         } else {
             try {
                 var json = JSON.parse(data);
@@ -57,8 +60,8 @@ function build(jsonFilePath, outputDirectory, language = "swift") {
                 });
 
                 switch (language) {
-                    case "swift": new SwiftBuilder(absoluteOutputPath, routeArray); break;
-                    case "html": new HtmlBuilder(absoluteOutputPath, routeArray); break;
+                    case "swift": new SwiftBuilder(absoluteOutputPath, routeArray, scheme); break;
+                    case "html": new HtmlBuilder(absoluteOutputPath, routeArray, scheme); break;
                 }
             } catch (error) {
                 log.error("An error occured : " + error);

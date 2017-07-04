@@ -1,6 +1,6 @@
 import UIKit
 
-class _RouteArticle: Route {
+class _RouteArticle: RouteHuman {
 
     override var URI: String {
         get {
@@ -10,7 +10,7 @@ class _RouteArticle: Route {
 
     var articleId: String?
     
-    init(articleId: String?) {
+    init(articleId: String? = nil) {
         super.init()
         self.articleId = articleId
     }

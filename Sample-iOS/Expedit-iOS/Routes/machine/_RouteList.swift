@@ -1,6 +1,6 @@
 import UIKit
 
-class _RouteList: Route {
+class _RouteList: RouteHuman {
 
     override var URI: String {
         get {
@@ -10,7 +10,7 @@ class _RouteList: Route {
 
     var filter: String?
     
-    init(filter: String?) {
+    init(filter: String? = nil) {
         super.init()
         self.filter = filter
     }

@@ -1,10 +1,11 @@
+#!/usr/bin/env node
 /* jslint node: true, es6, this */
 "use strict";
 
-// cmd
-var build = require('./src/cmd/build');
-var help = require('./src/cmd/help');
-var template = require('./src/cmd/template');
+// cli
+var build = require('./src/cli/build');
+var help = require('./src/cli/help');
+var template = require('./src/cli/template');
 var version = require('./package.json').version;
 
 // libs
@@ -20,27 +21,19 @@ var chalk = require('chalk'),
 clear();
 new CLI.Line().output();
 
-console.log(
-    chalk.yellow('=====================================================')
-);
+console.log('=====================================================');
+console.log(figlet.textSync('EXPEDIT', { horizontalLayout: 'full' }));
+console.log('=================== version', version, '===================');
 
-console.log(
-    chalk.yellow(
-        figlet.textSync('EXPEDIT', { horizontalLayout: 'full' })
-    )
-);
-
-console.log(
-    chalk.yellow('=================== version', version, '===================')
-);
-
-
-var argv = parseArgs(process.argv);
 process.env.version = version;
 
-if (argv.help) help.print();
-else if (argv.template) template.createFile(argv.template);
-else if (argv.input || argv.output) build(argv.input, argv.output, argv.language);
-else help.print();
+var command = process.argv[2]
+var argv = parseArgs(process.argv);
+
+switch (command) {
+    case "template": template.createFile(argv.output); break;
+    case "build": build(argv.input, argv.output, argv.language, argv.scheme); break;
+    default: help.print(); break;
+}
 
 new CLI.Line().output();
